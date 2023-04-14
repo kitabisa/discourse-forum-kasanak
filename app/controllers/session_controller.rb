@@ -37,6 +37,13 @@ class SessionController < ApplicationController
 
     sso = DiscourseConnect.generate_sso(return_path, secure_session: secure_session)
     connect_verbose_warn { "Verbose SSO log: Started SSO process\n\n#{sso.diagnostics}" }
+
+    # Forward AuthZ headers to redirect URL if any
+    auth_header = request.headers["Authorization"]
+    if auth_header
+      response.headers["Authorization"] = auth_header
+    end
+
     redirect_to sso_url(sso), allow_other_host: true
   end
 
