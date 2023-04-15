@@ -44,7 +44,7 @@ class SessionController < ApplicationController
 
     redirect_sso_url = sso_url(sso)
     if auth_header {
-      redirect_sso_url = "#{redirect_sso_url}&token=#{auth_header}"
+      redirect_sso_url = "#{redirect_sso_url}&jwt_token=#{auth_header}"
     }
 
     redirect_to redirect_sso_url, allow_other_host: true
