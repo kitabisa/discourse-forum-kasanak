@@ -30,13 +30,10 @@ class SessionController < ApplicationController
     # Forward AuthZ headers to redirect URL if any
     auth_header = request.headers["Authorization"]
     connect_verbose_warn { "Auth Header : #{auth_header}" }
-    if auth_header
-      response.headers["Authorization"] = auth_header
-    end
 
     if destination_url && return_path == path("/")
       uri = URI.parse(destination_url)
-      return_path = "#{uri.path}#{uri.query ? "?#{uri.query}&token=#{auth_header}" : ""}"
+      return_path = "#{uri.path}#{uri.query ? "?#{uri.query}" : ""}"
     end
 
     session.delete(:destination_url)
@@ -45,7 +42,12 @@ class SessionController < ApplicationController
     sso = DiscourseConnect.generate_sso(return_path, secure_session: secure_session)
     connect_verbose_warn { "Verbose SSO log: Started SSO process\n\n#{sso.diagnostics}" }
 
-    redirect_to sso_url(sso), allow_other_host: true
+    redirect_sso_url = sso_url(sso)
+    if auth_header {
+      redirect_sso_url = "#{redirect_sso_url}&token=#{auth_header}"
+    }
+
+    redirect_to redirect_sso_url, allow_other_host: true
   end
 
   def sso_provider(payload = nil, confirmed_2fa_during_login = false)
