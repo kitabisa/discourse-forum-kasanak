@@ -29,7 +29,7 @@ class SessionController < ApplicationController
 
     # Forward AuthZ headers to redirect URL if any
     auth_header = request.headers["Authorization"]
-    if auth_header.empty?
+    if !auth_header.present?
       auth_header = params[:jwt_token]
     end
     connect_verbose_warn { "Auth Header : #{auth_header}" }
