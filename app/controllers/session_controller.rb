@@ -44,6 +44,7 @@ class SessionController < ApplicationController
 
     redirect_sso_url = sso_url(sso)
     if auth_header
+      auth_header.sub("Bearer ", "")
       redirect_sso_url = "#{redirect_sso_url}&jwt_token=#{auth_header}"
     end
 
