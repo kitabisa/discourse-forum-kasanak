@@ -43,9 +43,9 @@ class SessionController < ApplicationController
     connect_verbose_warn { "Verbose SSO log: Started SSO process\n\n#{sso.diagnostics}" }
 
     redirect_sso_url = sso_url(sso)
-    if auth_header {
+    if auth_header
       redirect_sso_url = "#{redirect_sso_url}&jwt_token=#{auth_header}"
-    }
+    end
 
     redirect_to redirect_sso_url, allow_other_host: true
   end
